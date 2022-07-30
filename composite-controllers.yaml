@@ -3,12 +3,12 @@
 apiVersion: metacontroller.k8s.io/v1alpha1
 kind: CompositeController
 metadata:
-  name: hello-controller
+  name: app
 spec:
   generateSelector: true
   parentResource:
-    apiVersion: example.com/v1
-    resource: helloworlds
+    apiVersion: devopstoolkitseries.com/v1
+    resource: apps
   childResources:
   - apiVersion: v1
     resource: pods
@@ -17,7 +17,7 @@ spec:
   hooks:
     sync:
       webhook:
-        url: http://hello-controller.hello/sync
+        url: http://app-controller.controllers/sync
 
 ---
 
@@ -28,9 +28,9 @@ metadata:
 spec:
   generateSelector: true
   parentResource:
-    apiVersion: example.com/v1
-    resource: helloworlds
+    apiVersion: devopstoolkitseries.com/v1
+    resource: apps
   hooks:
     sync:
       webhook:
-        url: http://slack.hello:8080/slack
+        url: http://slack-controller.controllers:8080/slack

@@ -24,8 +24,21 @@ spec:
             properties:
               image:
                 type: string
+              port:
+                type: integer
+              cpuLimit:
+                type: string
+              memLimit:
+                type: string
+              cpuReq:
+                type: string
+              memReq:
+                type: string
+              host:
+                type: string
             required:
             - image
+            - host
     subresources:
      status: {}
 

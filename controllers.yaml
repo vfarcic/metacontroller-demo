@@ -3,38 +3,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-controller
+  name: app-controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hello-controller
+      app: app-controller
   template:
     metadata:
       labels:
-        app: hello-controller
+        app: app-controller
     spec:
       containers:
       - name: controller
         image: python:3
-        command: ["python3", "/hooks/sync.py"]
+        command: ["python3", "/hooks/app.py"]
         volumeMounts:
         - name: hooks
           mountPath: /hooks
       volumes:
       - name: hooks
         configMap:
-          name: hello-controller
+          name: app
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-controller
+  name: app-controller
 spec:
   selector:
-    app: hello-controller
+    app: app-controller
   ports:
   - port: 80
 
@@ -43,29 +43,29 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: slack
+  name: slack-controller
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: slack
+      app: slack-controller
   template:
     metadata:
       labels:
-        app: slack
+        app: slack-controller
     spec:
       containers:
       - name: controller
-        image: vfarcic/metacontroller-demo:0.0.6
+        image: vfarcic/metacontroller-demo:0.0.7
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: slack
+  name: slack-controller
 spec:
   selector:
-    app: slack
+    app: slack-controller
   ports:
   - port: 8080
