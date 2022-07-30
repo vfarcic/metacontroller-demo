@@ -1,0 +1,5 @@
+apiVersion: devopstoolkitseries.com/v1
+kind: Slack
+metadata:
+  name: apps
+spec: {}
