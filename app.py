@@ -6,10 +6,11 @@ class Controller(BaseHTTPRequestHandler):
   def sync(self, parent, children):
     # Compute status based on observed state.
     desired_status = {
-      "pods": len(children["Pod.v1"])
+      "deployments": len(children["Deployment.apps/v1"]),
+      "services": len(children["Service.v1"]),
+      "ingresses": len(children["Ingress.networking.k8s.io/v1"])
     }
 
-    # Generate the desired child object(s).
     image = parent.get("spec", {}).get("image")
     port = parent.get("spec", {}).get("port", "80")
     cpu_limit = parent.get("spec", {}).get("cpuLimit", "500m")
@@ -17,6 +18,7 @@ class Controller(BaseHTTPRequestHandler):
     cpu_req = parent.get("spec", {}).get("cpuReq", "250m")
     mem_req = parent.get("spec", {}).get("memReq", "256Mi")
     host = parent.get("spec", {}).get("host")
+    replicas = parent.get("spec", {}).get("replicas")
     desired_resources = [
       {
         "apiVersion": "apps/v1",
@@ -28,6 +30,7 @@ class Controller(BaseHTTPRequestHandler):
           }
         },
         "spec": {
+          "replicas": replicas,
           "selector": {
             "matchLabels": {
               "app.kubernetes.io/name": parent["metadata"]["name"]
@@ -120,7 +123,7 @@ class Controller(BaseHTTPRequestHandler):
                   }
                 ]
               },
-              "host": "devopstoolkitseries.com"
+              "host": host
             }
           ]
         }
@@ -130,8 +133,10 @@ class Controller(BaseHTTPRequestHandler):
     return {"status": desired_status, "children": desired_resources}
 
   def do_POST(self):
-    # Serve the sync() function as a JSON webhook.
     observed = json.loads(self.rfile.read(int(self.headers.get("content-length"))))
+    print("xxx")
+    # print(observed["children"])
+    print("yyy")
     desired = self.sync(observed["parent"], observed["children"])
 
     self.send_response(200)

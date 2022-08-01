@@ -36,6 +36,9 @@ spec:
                 type: string
               host:
                 type: string
+              replicas:
+                type: integer
+                default: 1
             required:
             - image
             - host
